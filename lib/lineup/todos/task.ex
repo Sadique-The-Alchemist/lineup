@@ -41,5 +41,8 @@ defmodule Lineup.Todos.Task do
     |> put_change(:status, :blocked)
   end
 
-  defp change_status(changeset, _params), do: changeset
+  defp change_status(changeset, _params) do
+    changeset
+    |> put_change(:status, :ready)
+  end
 end
