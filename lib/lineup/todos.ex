@@ -6,6 +6,18 @@ defmodule Lineup.Todos do
   alias Ecto.Multi
 
   @doc """
+  List all groups
+  """
+
+  def list_groups() do
+    Repo.all(Group)
+  end
+
+  def list_tasks(group_id) do
+    from(t in Task, where: t.group_id == ^group_id) |> Repo.all()
+  end
+
+  @doc """
   Insert a group in database
   ### Params
   * `params` - map contains attributes to create group

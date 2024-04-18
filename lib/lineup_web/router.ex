@@ -18,6 +18,8 @@ defmodule LineupWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/groups", GroupLive
+    live "/:id/:name", TaskLive
   end
 
   # Other scopes may use custom stacks.
