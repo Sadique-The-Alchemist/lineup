@@ -5,6 +5,8 @@ defmodule Lineup.Repo.Migrations.CreateGroup do
     create table(:groups) do
       add :name, :string, null: false
       add :description, :string
+      add :total_task, :integer, default: 0
+      add :completed_task, :integer, default: 0
       timestamps()
     end
   end

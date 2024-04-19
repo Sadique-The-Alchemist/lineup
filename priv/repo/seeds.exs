@@ -1,53 +1,52 @@
 alias Lineup.Repo
 alias Lineup.Todos.Group
-alias Lineup.Todos.Task
+alias Lineup.Todos
 
-workout = Repo.insert!(%Group{name: "workout"})
+workout = Repo.insert!(%Group{name: "Workout"})
 
-carry_gym_bag =
-  %Task{}
-  |> Task.changeset(%{"name" => "Carry gym bag", "group_id" => workout.id})
-  |> Repo.insert!()
+{:ok, %{task: carry_gym_bag}} =
+  Todos.create_task(%{"name" => "Carry gym bag", "group_id" => workout.id})
 
-%Task{}
-|> Task.changeset(%{
+Todos.create_task(%{
   "name" => "Go to gym",
   "group_id" => workout.id,
-  "depended_task_id" => carry_gym_bag.id
+  "depended_task_ids" => [carry_gym_bag.id]
 })
-|> Repo.insert!()
 
 offday = Repo.insert!(%Group{name: "Offday"})
 
-purchase =
-  %Task{}
-  |> Task.changeset(%{
+{:ok, %{task: purchase}} =
+  Todos.create_task(%{
     "name" => "Purchase",
     "description" => "Some groceries",
     "group_id" => offday.id
   })
-  |> Repo.insert!()
 
-%Task{}
-|> Task.changeset(%{
+Todos.create_task(%{
   "name" => "Wash cloths",
   "group_id" => offday.id,
-  "depended_task_id" => purchase.id
+  "depended_task_ids" => [purchase.id]
 })
-|> Repo.insert!()
 
-%Task{}
-|> Task.changeset(%{
+Todos.create_task(%{
   "name" => "Clean floor",
   "group_id" => offday.id,
-  "depended_task_id" => purchase.id
+  "depended_task_ids" => [purchase.id]
 })
-|> Repo.insert!()
 
-%Task{}
-|> Task.changeset(%{
+Todos.create_task(%{
   "name" => "Make dinner",
   "group_id" => offday.id,
-  "depended_task_id" => purchase.id
+  "depended_task_ids" => [purchase.id]
 })
-|> Repo.insert!()
+
+art = Repo.insert!(%Group{name: "Art"})
+
+{:ok, %{task: buy_paper}} = Todos.create_task(%{"name" => "Buy paper", "group_id" => art.id})
+{:ok, %{task: buy_glue}} = Todos.create_task(%{"name" => "Buy glue", "group_id" => art.id})
+
+Todos.create_task(%{
+  "name" => "Make poster",
+  "group_id" => art.id,
+  "depended_task_ids" => [buy_paper.id, buy_glue.id]
+})

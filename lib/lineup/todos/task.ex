@@ -3,14 +3,13 @@ defmodule Lineup.Todos.Task do
   import Ecto.Changeset
 
   @required_keys [:name, :status, :group_id]
-  @optional_keys [:description, :depended_task_id]
+  @optional_keys [:description]
 
   schema "tasks" do
     field :name, :string
     field :description, :string
     field :status, Ecto.Enum, values: [:ready, :blocked, :completed]
     belongs_to(:group, Lineup.Todos.Group)
-    belongs_to(:depended_task, __MODULE__)
     timestamps()
   end
 
@@ -35,8 +34,8 @@ defmodule Lineup.Todos.Task do
     |> validate_required([:status])
   end
 
-  defp change_status(changeset, %{"depended_task_id" => depended_task_id})
-       when is_integer(depended_task_id) do
+  defp change_status(changeset, %{"depended_task_ids" => depended_task_id})
+       when is_list(depended_task_id) and length(depended_task_id) > 0 do
     changeset
     |> put_change(:status, :blocked)
   end

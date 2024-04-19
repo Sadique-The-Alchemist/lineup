@@ -1,7 +1,7 @@
 defmodule Lineup.TodosTest do
   alias Lineup.Todos
   import Lineup.Factory
-
+  alias Todos.TaskDependency
   use Lineup.DataCase
 
   describe "create_group/1" do
@@ -22,7 +22,7 @@ defmodule Lineup.TodosTest do
       name = "Task #{System.unique_integer()}"
       group = insert!(:group)
 
-      assert {:ok, task} =
+      assert {:ok, %{task: task}} =
                Todos.create_task(%{"name" => name, "group_id" => group.id, "status" => "ready"})
 
       assert task.name == name
@@ -31,23 +31,30 @@ defmodule Lineup.TodosTest do
 
     test "can not create with invalid params" do
       name = "Task #{System.unique_integer()}"
-      assert {:error, changeset} = Todos.create_task(%{"name" => name, "status" => "blocked"})
+
+      assert {:error, :task, changeset, _} =
+               Todos.create_task(%{"name" => name, "status" => "blocked"})
+
       assert [group_id: {"can't be blank", [validation: :required]}] == changeset.errors
     end
 
-    test "task with depended tasks creates with status blocked" do
+    test "task with depended tasks creates with status blocked and creates task dependencys" do
       group = insert!(:group)
-      depended_task = insert!(:task, group_id: group.id)
+      depended_task1 = insert!(:task, group_id: group.id, status: :ready)
+      depended_task2 = insert!(:task, group_id: group.id, status: :blocked)
+      depended_task3 = insert!(:task, group_id: group.id, status: :completed)
       name = "Task #{System.unique_integer()}"
 
-      assert {:ok, task} =
+      assert {:ok, repsonce} =
                Todos.create_task(%{
                  "name" => name,
                  "group_id" => group.id,
-                 "depended_task_id" => depended_task.id
+                 "depended_task_ids" => [depended_task1.id, depended_task2.id, depended_task3.id]
                })
 
+      task = Map.get(repsonce, :task)
       assert task.status == :blocked
+      assert TaskDependency |> Repo.all() |> length() == 2
     end
   end
 
@@ -68,13 +75,14 @@ defmodule Lineup.TodosTest do
     end
 
     test "completing task unblocks the tasks that depended by this task" do
-      depeneded_task = insert!(:task, status: :ready)
-      task = insert!(:task, depended_task_id: depeneded_task.id, status: :blocked)
+      depended_task = insert!(:task, status: :ready)
+      blocked_task = insert!(:task, status: :blocked)
+      insert!(:task_dependecy, depended_task_id: depended_task.id, task_id: blocked_task.id)
 
       assert {:ok, %{:complete_task => completed_task} = responce} =
-               Todos.complete_task(depeneded_task.id)
+               Todos.complete_task(depended_task.id)
 
-      unblocked_task = Map.fetch!(responce, {:unblocked_task, task.id})
+      unblocked_task = Map.fetch!(responce, {:unblocked_task, blocked_task.id})
 
       assert completed_task.status == :completed
       assert unblocked_task.status == :ready

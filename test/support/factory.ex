@@ -1,7 +1,6 @@
 defmodule Lineup.Factory do
   alias Lineup.Repo
-  alias Lineup.Todos.Group
-  alias Lineup.Todos.Task
+  alias Lineup.Todos.{Group, Task, TaskDependency}
 
   def build(:group) do
     %Group{
@@ -11,6 +10,10 @@ defmodule Lineup.Factory do
 
   def build(:task) do
     %Task{name: "Task #{System.unique_integer()}"}
+  end
+
+  def build(:task_dependecy) do
+    %TaskDependency{}
   end
 
   def build(factory_name, attributes) do

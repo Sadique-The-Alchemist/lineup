@@ -1,6 +1,6 @@
 defmodule LineupWeb.TaskLive do
   use LineupWeb, :live_view
-
+  import LineupWeb.TodoComponent
   alias Lineup.Todos
 
   def mount(%{"id" => group_id, "name" => group_name}, _session, socket) do
@@ -35,22 +35,15 @@ defmodule LineupWeb.TaskLive do
   def render(assigns) do
     ~H"""
     <div class="mt-10">
-      <label><%= @group_name %></label>
-      <.table id="tasks" rows={@tasks}>
-        <:col :let={task} label="Name"><%= task.name %></:col>
-        <:col :let={task} label="Status"><%= task.status %></:col>
-        <:col :let={task} label="Complete">
-          <input
-            type="checkbox"
-            id={"task-#{task.id}"}
-            name={task.name}
-            value={task.id}
-            checked={task.status == :completed}
-            class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
-            phx-click="complete_task"
-          />
-        </:col>
-      </.table>
+      <div class="flex relative">
+        <h1 class="text-2xl text-slate-500"><%= @group_name %></h1>
+        <div class="text-blue-500 absolute right-0"><a href="/groups">ALL GROUPS</a></div>
+      </div>
+      <div class="mt-10 border-t-2">
+        <div :for={task <- @tasks}>
+          <.task task={task} />
+        </div>
+      </div>
     </div>
     """
   end

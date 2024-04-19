@@ -7,7 +7,6 @@ defmodule Lineup.Repo.Migrations.CreateTasks do
       add :description, :string
       add :status, :string
       add :group_id, references(:groups, on_delete: :nothing)
-      add :depended_task_id, references(:tasks, on_delete: :nothing)
       timestamps()
     end
   end
