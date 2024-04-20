@@ -37,7 +37,7 @@ defmodule LineupWeb.TaskLive do
     <div class="mt-10">
       <div class="flex relative">
         <h1 class="text-2xl text-slate-500"><%= @group_name %></h1>
-        <div class="text-blue-500 absolute right-0"><a href="/groups">ALL GROUPS</a></div>
+        <div class="text-blue-500 absolute right-0"><a href="/">ALL GROUPS</a></div>
       </div>
       <div class="mt-10 border-t-2">
         <div :for={task <- @tasks}>

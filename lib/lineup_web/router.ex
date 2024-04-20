@@ -17,8 +17,7 @@ defmodule LineupWeb.Router do
   scope "/", LineupWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
-    live "/groups", GroupLive
+    live "/", GroupLive
     live "/:id/:name", TaskLive
   end
 
