@@ -9,7 +9,7 @@ defmodule Lineup.Factory do
   end
 
   def build(:task) do
-    %Task{name: "Task #{System.unique_integer()}"}
+    %Task{name: "Task #{System.unique_integer()}", status: :ready, group: build(:group)}
   end
 
   def build(:task_dependecy) do

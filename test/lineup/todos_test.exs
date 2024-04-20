@@ -40,9 +40,9 @@ defmodule Lineup.TodosTest do
 
     test "task with depended tasks creates with status blocked and creates task dependencys" do
       group = insert!(:group)
-      depended_task1 = insert!(:task, group_id: group.id, status: :ready)
-      depended_task2 = insert!(:task, group_id: group.id, status: :blocked)
-      depended_task3 = insert!(:task, group_id: group.id, status: :completed)
+      depended_task1 = insert!(:task, group: group, status: :ready)
+      depended_task2 = insert!(:task, group: group, status: :blocked)
+      depended_task3 = insert!(:task, group: group, status: :completed)
       name = "Task #{System.unique_integer()}"
 
       assert {:ok, repsonce} =
